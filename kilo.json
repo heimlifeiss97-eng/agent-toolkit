@@ -1,0 +1,9 @@
+{
+  "mcp": {
+    "docs": {
+      "type": "remote",
+      "url": "https://docs.opensea.io/mcp",
+      "enabled": true
+    }
+  }
+}
