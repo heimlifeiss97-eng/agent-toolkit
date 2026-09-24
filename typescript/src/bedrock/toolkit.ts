@@ -6,6 +6,10 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 
 const SOURCE = "BEDROCK";
 
+function getJsonSchema(schema: any): any {
+    return zodToJsonSchema(schema);
+}
+
 export interface BedrockTool {
     toolSpec: {
         name: string;
@@ -45,15 +49,19 @@ class PayPalAgentToolkit {
             isToolAllowed(tool, configuration)
         );
         this._paypal = new PayPalAPI(this.client, configuration.context);
-        this.tools = filteredTools.map((tool) => ({
-            toolSpec: {
-                name: tool.method,
-                description: tool.description,
-                inputSchema: {
-                    json: zodToJsonSchema(tool.parameters)
+        this.tools = filteredTools.map((tool) => {
+            const jsonSchema: any = getJsonSchema(tool.parameters);
+            const toolObj: BedrockTool = {
+                toolSpec: {
+                    name: tool.method,
+                    description: tool.description,
+                    inputSchema: {
+                        json: jsonSchema
+                    }
                 }
-            }
-        }));
+            };
+            return toolObj;
+        });
     }
 
     getTools(): BedrockTool[] {
