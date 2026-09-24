@@ -50,10 +50,10 @@ class PayPalAgentToolkit {
                 name: tool.method,
                 description: tool.description,
                 inputSchema: {
-                    json: zodToJsonSchema(tool.parameters)
+                    json: zodToJsonSchema((tool.parameters as any) as any)
                 }
             }
-        }));
+        })) as any as BedrockTool[];
     }
 
     getTools(): BedrockTool[] {
