@@ -1,7 +1,7 @@
 import PayPalAPI from "../shared/api";
 import PayPalClient from "../shared/client";
 import { Configuration, isToolAllowed } from "../shared/configuration";
-import tools from "../shared/tools";
+import tools, { Tool } from "../shared/tools";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
 const SOURCE = "BEDROCK";
@@ -14,6 +14,22 @@ export interface BedrockTool {
             json: any;
         }
     }
+}
+
+function toJsonSchema(parameters: any): any {
+    return zodToJsonSchema(parameters);
+}
+
+function createBedrockTool(tool: Tool): BedrockTool {
+    return {
+        toolSpec: {
+            name: tool.method,
+            description: tool.description,
+            inputSchema: {
+                json: toJsonSchema(tool.parameters)
+            }
+        }
+    };
 }
 
 export interface BedrockToolBlock {
@@ -45,15 +61,7 @@ class PayPalAgentToolkit {
             isToolAllowed(tool, configuration)
         );
         this._paypal = new PayPalAPI(this.client, configuration.context);
-        this.tools = filteredTools.map((tool) => ({
-            toolSpec: {
-                name: tool.method,
-                description: tool.description,
-                inputSchema: {
-                    json: zodToJsonSchema(tool.parameters)
-                }
-            }
-        }));
+        this.tools = filteredTools.map(createBedrockTool);
     }
 
     getTools(): BedrockTool[] {
