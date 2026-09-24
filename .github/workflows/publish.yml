@@ -104,6 +104,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add typescript/package.json  python/pyproject.toml
           git commit -m "chore: version bump to v${{ steps.bump_npm.outputs.version }} [skip ci]" || echo "No changes to commit"
+           
+          # Delete existing tag locally and remotely if it exists
+          git tag -d v${{ steps.bump_npm.outputs.version }} 2>/dev/null || true
+          git push origin :refs/tags/v${{ steps.bump_npm.outputs.version }} 2>/dev/null || true
+           
+          # Create the tag and push it
           git tag v${{ steps.bump_npm.outputs.version }}
           git push origin main --tags
         env:
