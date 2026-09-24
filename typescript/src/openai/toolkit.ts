@@ -28,9 +28,9 @@ class PayPalAgentToolkit {
             function: {
                 name: tool.method,
                 description: tool.description,
-                parameters: zodToJsonSchema(tool.parameters),
+                parameters: zodToJsonSchema((tool.parameters as any) as any),
             },
-        }));
+        })) as any as ChatCompletionTool[];
     }
 
     getTools(): ChatCompletionTool[] {
