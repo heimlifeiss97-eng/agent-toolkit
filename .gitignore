@@ -77,9 +77,36 @@ desktop.ini
 # Environments or Secrets
 .envrc
 *.env
+*.env.local
+*.env.*.local
 *.secret
 *.key
 *.pem
+*.p12
+*.pfx
+secrets.json
+credentials.json
+config.json
+service-account-key.json
+
+# AWS/Cloud credentials
+aws_credentials
+.aws/credentials
+.aws/config
+
+# GCP credentials
+gcloud/
+.gcloud/
+
+# IDE sensitive files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+.idea/misc.xml
+.idea/vcs.xml
+
+# Detect-secrets baseline (review carefully before committing changes)
+.secrets.baseline
 
 # logs
 logs/

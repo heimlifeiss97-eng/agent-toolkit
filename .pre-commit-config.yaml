@@ -1,0 +1,39 @@
+repos:
+  # Detect secrets: prevent committing API keys, tokens, and credentials
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: ['scan', '--baseline', '.secrets.baseline']
+        exclude: |
+          (?x)^(
+            package-lock.json|
+            yarn.lock|
+            pnpm-lock.yaml|
+            Gemfile.lock|
+            poetry.lock
+          )$
+
+  # Trailing whitespace and end-of-file-fixer
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: detect-private-key
+
+  # Bandit: Security linter for Python
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        files: '^python/'
+        args: ['-c', 'pyproject.toml']
+        additional_dependencies: ['bandit[toml]']
+        exclude: '^python/examples/'
