@@ -11,7 +11,7 @@ class TwitterClient {
     this.axiosInstance = axios.create({
       baseURL: this.baseUrl,
       headers: {
-        Authorization: `******
+        Authorization: 'Bearer ' + bearerToken,
         'User-Agent': 'TwitterAgentToolkit/1.0',
       },
     });
