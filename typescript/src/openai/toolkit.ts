@@ -7,6 +7,18 @@ import {ChatCompletionTool, ChatCompletionMessageToolCall, ChatCompletionToolMes
 
 const SOURCE = "OPENAI";
 
+function createChatCompletionTool(tool: { method: string; description: string; parameters: any }): ChatCompletionTool {
+    const parameters: any = zodToJsonSchema(tool.parameters);
+    return {
+        type: 'function',
+        function: {
+            name: tool.method,
+            description: tool.description,
+            parameters,
+        },
+    };
+}
+
 class PayPalAgentToolkit {
     readonly client: PayPalClient;
     private _paypal: PayPalAPI;
@@ -23,14 +35,7 @@ class PayPalAgentToolkit {
             isToolAllowed(tool, configuration)
         );
         this._paypal = new PayPalAPI(this.client, configuration.context);
-        this.tools = filteredTools.map((tool) => ({
-            type: 'function',
-            function: {
-                name: tool.method,
-                description: tool.description,
-                parameters: zodToJsonSchema(tool.parameters),
-            },
-        }));
+        this.tools = filteredTools.map(createChatCompletionTool);
     }
 
     getTools(): ChatCompletionTool[] {

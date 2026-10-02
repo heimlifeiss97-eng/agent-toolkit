@@ -16,6 +16,19 @@ export interface BedrockTool {
     }
 }
 
+function createBedrockTool(tool: { method: string; description: string; parameters: any }): BedrockTool {
+    const schema: any = zodToJsonSchema(tool.parameters);
+    return {
+        toolSpec: {
+            name: tool.method,
+            description: tool.description,
+            inputSchema: {
+                json: schema
+            }
+        }
+    };
+}
+
 export interface BedrockToolBlock {
     toolUseId: string;
     name: string;
@@ -45,15 +58,7 @@ class PayPalAgentToolkit {
             isToolAllowed(tool, configuration)
         );
         this._paypal = new PayPalAPI(this.client, configuration.context);
-        this.tools = filteredTools.map((tool) => ({
-            toolSpec: {
-                name: tool.method,
-                description: tool.description,
-                inputSchema: {
-                    json: zodToJsonSchema(tool.parameters)
-                }
-            }
-        }));
+        this.tools = filteredTools.map(createBedrockTool);
     }
 
     getTools(): BedrockTool[] {
