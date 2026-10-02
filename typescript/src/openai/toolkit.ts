@@ -12,6 +12,18 @@ class PayPalAgentToolkit {
     private _paypal: PayPalAPI;
     tools: ChatCompletionTool[];
 
+    private transformTool(tool: any): ChatCompletionTool {
+        const parameters: any = zodToJsonSchema(tool.parameters);
+        return {
+            type: 'function',
+            function: {
+                name: tool.method,
+                description: tool.description,
+                parameters,
+            },
+        };
+    }
+
     constructor({ clientId, clientSecret, configuration, }: {
         clientId: string,
         clientSecret: string,
@@ -23,14 +35,7 @@ class PayPalAgentToolkit {
             isToolAllowed(tool, configuration)
         );
         this._paypal = new PayPalAPI(this.client, configuration.context);
-        this.tools = filteredTools.map((tool) => ({
-            type: 'function',
-            function: {
-                name: tool.method,
-                description: tool.description,
-                parameters: zodToJsonSchema(tool.parameters),
-            },
-        }));
+        this.tools = filteredTools.map((tool) => this.transformTool(tool));
     }
 
     getTools(): ChatCompletionTool[] {

@@ -34,6 +34,19 @@ class PayPalAgentToolkit {
     private _paypal: PayPalAPI;
     tools: BedrockTool[];
 
+    private transformTool(tool: any): BedrockTool {
+        const json: any = zodToJsonSchema(tool.parameters);
+        return {
+            toolSpec: {
+                name: tool.method,
+                description: tool.description,
+                inputSchema: {
+                    json
+                }
+            }
+        };
+    }
+
     constructor({ clientId, clientSecret, configuration, }: {
         clientId: string,
         clientSecret: string,
@@ -45,15 +58,7 @@ class PayPalAgentToolkit {
             isToolAllowed(tool, configuration)
         );
         this._paypal = new PayPalAPI(this.client, configuration.context);
-        this.tools = filteredTools.map((tool) => ({
-            toolSpec: {
-                name: tool.method,
-                description: tool.description,
-                inputSchema: {
-                    json: zodToJsonSchema(tool.parameters)
-                }
-            }
-        }));
+        this.tools = filteredTools.map((tool) => this.transformTool(tool));
     }
 
     getTools(): BedrockTool[] {
