@@ -1,6 +1,12 @@
-# PayPal Agent Toolkit
+# Agent Toolkit
 
-The PayPal Agent Toolkit enables popular agent frameworks including OpenAI's Agent SDK, LangChain, Vercel's AI SDK, and Model Context Protocol (MCP) to integrate with PayPal APIs through function calling. It includes support for TypeScript and is built on top of PayPal APIs and the PayPal SDKs.
+Agent Toolkits for various services that enable popular agent frameworks including OpenAI's Agent SDK, LangChain, Vercel's AI SDK, and Model Context Protocol (MCP) to integrate with APIs through function calling. Includes support for TypeScript and is built on top of public APIs and SDKs.
+
+## Available Toolkits
+
+### PayPal Agent Toolkit
+
+The PayPal Agent Toolkit enables integration with PayPal APIs through function calling.
 
 
 ## Available tools
@@ -248,3 +254,51 @@ Once you have your access token, update the `PAYPAL_ACCESS_TOKEN` value in your 
 
 ## Disclaimer
 *AI-generated content may be inaccurate or incomplete. Users are responsible for independently verifying any information before relying on it. PayPal makes no guarantees regarding output accuracy and is not liable for any decisions, actions, or consequences resulting from its use.*
+
+---
+
+## Twitter/X Agent Toolkit
+
+The Twitter/X Agent Toolkit enables integration with X (formerly Twitter) APIs to handle notifications and direct messages through function calling.
+
+### Features
+
+- **Notifications**: List, search, and get details about user notifications
+- **Direct Messages**: List conversations, retrieve full message history, send DMs, and search messages
+- **Multiple Framework Support**: Works with OpenAI, LangChain, Vercel AI SDK, AWS Bedrock, and MCP
+
+### Available Tools
+
+**Notifications**
+
+- `list_notifications`: Fetch user notifications
+- `search_notifications`: Search notifications with filters
+- `get_notification_details`: Get detailed notification information
+- `mark_notifications_as_read`: Mark notifications as read (requires elevated access)
+
+**Direct Messages**
+
+- `list_direct_messages`: List DM conversations
+- `get_direct_message_conversation`: Get full conversation history
+- `send_direct_message`: Send a direct message
+- `search_direct_messages`: Search through messages
+
+### Quick Start
+
+```typescript
+import { TwitterAgentToolkit } from '@paypal/agent-toolkit/twitter/ai-sdk';
+
+const toolkit = new TwitterAgentToolkit({
+  bearerToken: process.env.TWITTER_BEARER_TOKEN,
+  configuration: {
+    actions: {
+      notifications: { list: true, search: true },
+      directMessages: { list: true, send: true },
+    },
+  },
+});
+
+const tools = toolkit.getTools();
+```
+
+For detailed documentation, see [TWITTER_README.md](./typescript/TWITTER_README.md)
