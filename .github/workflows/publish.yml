@@ -104,6 +104,11 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add typescript/package.json  python/pyproject.toml
           git commit -m "chore: version bump to v${{ steps.bump_npm.outputs.version }} [skip ci]" || echo "No changes to commit"
+          # Check if tag already exists on remote and delete it if needed
+          if git ls-remote --tags origin | grep -q "refs/tags/v${{ steps.bump_npm.outputs.version }}$"; then
+            echo "Tag v${{ steps.bump_npm.outputs.version }} already exists on remote, deleting..."
+            git push origin :refs/tags/v${{ steps.bump_npm.outputs.version }}
+          fi
           git tag v${{ steps.bump_npm.outputs.version }}
           git push origin main --tags
         env:
