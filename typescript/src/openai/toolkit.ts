@@ -1,11 +1,26 @@
 import PayPalAPI from "../shared/api";
 import PayPalClient from "../shared/client";
 import { Configuration, isToolAllowed } from "../shared/configuration";
-import tools from "../shared/tools";
+import tools, { Tool } from "../shared/tools";
 import {zodToJsonSchema} from "zod-to-json-schema";
 import {ChatCompletionTool, ChatCompletionMessageToolCall, ChatCompletionToolMessageParam,} from "openai/resources";
 
 const SOURCE = "OPENAI";
+
+function toJsonSchema(parameters: any): any {
+    return zodToJsonSchema(parameters);
+}
+
+function createChatCompletionTool(tool: Tool): ChatCompletionTool {
+    return {
+        type: 'function',
+        function: {
+            name: tool.method,
+            description: tool.description,
+            parameters: toJsonSchema(tool.parameters),
+        },
+    };
+}
 
 class PayPalAgentToolkit {
     readonly client: PayPalClient;
@@ -23,14 +38,7 @@ class PayPalAgentToolkit {
             isToolAllowed(tool, configuration)
         );
         this._paypal = new PayPalAPI(this.client, configuration.context);
-        this.tools = filteredTools.map((tool) => ({
-            type: 'function',
-            function: {
-                name: tool.method,
-                description: tool.description,
-                parameters: zodToJsonSchema(tool.parameters),
-            },
-        }));
+        this.tools = filteredTools.map(createChatCompletionTool);
     }
 
     getTools(): ChatCompletionTool[] {
