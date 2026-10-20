@@ -28,7 +28,8 @@ import {
   createRefund,
   getRefund,
   updateSubscription,
-  getMerchantInsights
+  getMerchantInsights,
+  checkAccountBalance
 } from './functions';
 
 import type { Context } from './configuration';
@@ -147,6 +148,8 @@ class PayPalAPI {
         return getRefund(this.paypalClient, this.context, arg);
       case 'get_merchant_insights':
         return getMerchantInsights(this.paypalClient, this.context, arg);
+      case 'check_account_balance':
+        return checkAccountBalance(this.paypalClient, this.context, arg);
       default:
         throw new Error(`Invalid method: ${method}`);
     }

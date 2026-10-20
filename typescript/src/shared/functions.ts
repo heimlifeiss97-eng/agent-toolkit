@@ -31,7 +31,8 @@ import {
   createRefundParameters,
   updateSubscriptionParameters,
   updatePlanParameters,
-  getMerchantInsightsParameters
+  getMerchantInsightsParameters,
+  checkAccountBalanceParameters
 } from "./parameters";
 import {parseOrderDetails, parseUpdateSubscriptionPayload, toQueryString} from "./payloadUtils";
 import { TypeOf } from "zod";
@@ -1031,6 +1032,33 @@ export async function getMerchantInsights(
     return response.data;
   } catch (error: any) {
     logger('[updatePlan] Error retrieving insights:', error.message);
+    handleAxiosError(error);
+  }
+}
+
+export async function checkAccountBalance(
+  client: PayPalClient,
+  context: Context,
+  params: TypeOf<ReturnType<typeof checkAccountBalanceParameters>>
+): Promise<any> {
+  logger('[checkAccountBalance] Starting to retrieve account balance');
+
+  const { currency_code } = params;
+  const headers = await client.getHeaders();
+  logger('[checkAccountBalance] Headers obtained');
+
+  let url = `${client.getBaseUrl()}/v1/wallet`;
+  if (currency_code) {
+    url += `?currency_code=${currency_code}`;
+  }
+
+  try {
+    logger('[checkAccountBalance] Sending request to PayPal API');
+    const response = await axios.get(url, { headers: headers });
+    logger(`[checkAccountBalance] Account balance retrieved successfully. Status: ${response.status}`);
+    return response.data;
+  } catch (error: any) {
+    logger('[checkAccountBalance] Error retrieving account balance:', error.message);
     handleAxiosError(error);
   }
 }

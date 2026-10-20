@@ -32,7 +32,8 @@ import {
   updateSubscriptionPrompt,
   getRefundPrompt,
   createRefundPrompt,
-  getMerchantInsightsPrompt
+  getMerchantInsightsPrompt,
+  checkAccountBalancePrompt
 } from './prompts';
 
 import {
@@ -67,7 +68,8 @@ import {
   updateSubscriptionParameters,
   getRefundParameters,
   createRefundParameters,
-  getMerchantInsightsParameters
+  getMerchantInsightsParameters,
+  checkAccountBalanceParameters
 } from './parameters';
 
 import type { Context } from './configuration';
@@ -434,6 +436,17 @@ const tools = (context: Context): Tool[] => [
     actions: {
       insights: {
         get: true,
+      }
+    }
+  },
+  {
+    method: 'check_account_balance',
+    name: 'Check Account Balance',
+    description: checkAccountBalancePrompt(context),
+    parameters: checkAccountBalanceParameters(context),
+    actions: {
+      account: {
+        checkBalance: true,
       }
     }
   }
