@@ -45,7 +45,11 @@ class PayPalAgentToolkit {
             isToolAllowed(tool, configuration)
         );
         this._paypal = new PayPalAPI(this.client, configuration.context);
-        this.tools = filteredTools.map((tool) => ({
+        this.tools = this.transformTools(filteredTools);
+    }
+
+    private transformTools(filteredTools: any[]): BedrockTool[] {
+        return filteredTools.map((tool: any) => ({
             toolSpec: {
                 name: tool.method,
                 description: tool.description,
