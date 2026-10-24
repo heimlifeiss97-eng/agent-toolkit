@@ -56,6 +56,7 @@ jobs:
 
       # Determine the release type
       - name: Set release type
+        if: github.event.pusher.name == 'web-flow'
         id: set_release_type
         run: |
           if [ -z "${{ github.event.inputs.release_type }}" ]; then
@@ -66,6 +67,7 @@ jobs:
 
       # ---- Version Bump (TypeScript) ----
       - name: Bump npm version (TypeScript)
+        if: github.event.pusher.name == 'web-flow'
         id: bump_npm
         working-directory: ./typescript
         run: |
@@ -76,20 +78,21 @@ jobs:
 
       # ---- Sync versions across packages ----
       - name: Sync versions across all packages
+        if: github.event.pusher.name == 'web-flow'
         run: |
           VERSION=${{ steps.bump_npm.outputs.version }}
           echo "Syncing version $VERSION across packages"
-          
+           
           # Update TypeScript package.json (already done, but ensure consistency)
           jq ".version = \"$VERSION\"" typescript/package.json > tmp.json && mv tmp.json typescript/package.json
-          
+           
           # Update Python version using direct file manipulation
           if [ -f python/pyproject.toml ]; then
             # Update version in pyproject.toml
             sed -i "s/^version = .*/version = \"$VERSION\"/" python/pyproject.toml
             echo "Updated Python version in pyproject.toml"
           fi
-          
+           
           # Alternative: Update __init__.py if it exists
           if [ -f python/src/__init__.py ]; then
             sed -i "s/__version__ = .*/__version__ = \"$VERSION\"/" python/src/__init__.py
@@ -99,6 +102,7 @@ jobs:
 
       # Commit, tag, and push
       - name: Commit and tag version bump
+        if: github.event.pusher.name == 'web-flow'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -111,6 +115,7 @@ jobs:
 
       # ---- Build & Publish npm (TypeScript) ----
       - name: Build and publish npm (TypeScript)
+        if: github.event.pusher.name == 'web-flow'
         working-directory: ./typescript
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
@@ -122,6 +127,7 @@ jobs:
 
       # ---- Build & Publish PyPI ----
       - name: Build and publish Python
+        if: github.event.pusher.name == 'web-flow'
         working-directory: ./python
         run: |
           python -m build
