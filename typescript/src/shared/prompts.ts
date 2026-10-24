@@ -280,3 +280,9 @@ Retrieve business intelligence metrics and analytics for a merchant, filtered by
 
 This tool returns actionable insights into orders and sales data, supporting data-driven business decisions.
 `;
+
+export const checkAccountBalancePrompt = (context: Context) => `
+Retrieve the account balance information for the PayPal account, including available funds and currency information.
+
+This tool provides real-time balance details that can be used to check wallet funds and account status.
+`;

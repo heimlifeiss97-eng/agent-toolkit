@@ -425,4 +425,8 @@ export const getMerchantInsightsParameters = (context: Context) => z.object({
   time_interval: z.string().describe('The time periods used for segmenting metrics data. It can be "DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", or "YEARLY"'),
 })
 
+export const checkAccountBalanceParameters = (context: Context) => z.object({
+  currency_code: z.string().optional().describe('The currency code to filter the account balance by (e.g., USD, EUR). If not specified, returns balances for all currencies.'),
+});
+
 
