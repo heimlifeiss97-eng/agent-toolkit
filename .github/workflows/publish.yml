@@ -118,7 +118,6 @@ jobs:
         if: github.event.pusher.name == 'web-flow'
         working-directory: ./typescript
         run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
           npm install
           npm run build
           npm publish --access public
